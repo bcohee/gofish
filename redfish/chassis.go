@@ -259,7 +259,7 @@ func (chassis *Chassis) UnmarshalJSON(b []byte) error {
 		temp
 		Drives          common.Link
 		Thermal         common.Link
-		Sensor         common.Link
+		Sensor          common.Link
 		Power           common.Link
 		NetworkAdapters common.Link
 		Links           linkReference

@@ -15,16 +15,16 @@ type ReadingUnits string
 
 const (
 
-	// RPMReadingUnits Indicates that the fan reading and thresholds are
+	// RPMReadingUnits Indicates that the sensorfan reading and thresholds are
 	// measured in rotations per minute.
 	RPMReadingUnits ReadingUnits = "RPM"
-	// PercentReadingUnits Indicates that the fan reading and thresholds are
+	// PercentReadingUnits Indicates that the sensorfan reading and thresholds are
 	// measured in percentage.
 	PercentReadingUnits ReadingUnits = "Percent"
 )
 
-// Fan is
-type Fan struct {
+// SensorFan is
+type SensorFan struct {
 	common.Entity
 	// assembly shall be a link to a resource of type Assembly.
 	assembly string
@@ -38,9 +38,9 @@ type Fan struct {
 	// state of that equipment, shall be indicated as not hot-pluggable.
 	HotPluggable bool
 	// IndicatorLED shall contain the indicator light state for the indicator
-	// light associated with this fan.
+	// light associated with this sensorfan.
 	IndicatorLED common.IndicatorLED
-	// Location shall contain location information of the associated fan.
+	// Location shall contain location information of the associated sensorfan.
 	Location common.Location
 	// LowerThresholdCritical shall indicate the Reading is below the normal
 	// range but is not yet fatal. The units shall be the same units as the
@@ -53,7 +53,7 @@ type Fan struct {
 	// range but is not critical. The units shall be the same units as the related Reading property.
 	LowerThresholdNonCritical float32
 	// Manufacturer shall be the name of the organization responsible for producing
-	// the fan. This organization might be the entity from whom the fan is
+	// the sensorfan. This organization might be the entity from whom the sensorfan is
 	// purchased, but this is not necessarily true.
 	Manufacturer string
 	// MaxReadingRange shall indicate the
@@ -69,32 +69,32 @@ type Fan struct {
 	// as the related Reading property.
 	MinReadingRange float32
 	// Model shall contain the model information as defined by the manufacturer
-	// for the associated fan.
+	// for the associated sensorfan.
 	Model string
 	// PartNumber shall contain the part number as defined by the manufacturer
-	// for the associated fan.
+	// for the associated sensorfan.
 	PartNumber string
 	// PhysicalContext shall be a description of the affected device or region
-	// within the chassis to which this fan is associated.
+	// within the chassis to which this sensorfan is associated.
 	PhysicalContext string
-	// Reading shall be the current value of the fan sensor's reading.
+	// Reading shall be the current value of the sensorfan sensor's reading.
 	Reading float32
-	// ReadingUnits shall be the units in which the fan's reading and thresholds are measured.
+	// ReadingUnits shall be the units in which the sensorfan's reading and thresholds are measured.
 	ReadingUnits ReadingUnits
-	// Redundancy is used to show redundancy for fans and other elements in
+	// Redundancy is used to show redundancy for sensorfans and other elements in
 	// this resource. The use of IDs within these arrays shall reference the
 	// members of the redundancy groups.
 	Redundancy []Redundancy
 	// RedundancyCount is the number of Redundancy elements.
 	RedundancyCount int `json:"Redundancy@odata.count"`
-	// SensorNumber shall be a numerical identifier for this fan speed sensor
+	// SensorNumber shall be a numerical identifier for this sensorfan speed sensor
 	// that is unique within this resource.
 	SensorNumber int
 	// SerialNumber shall contain the serial number as defined by the
-	// manufacturer for the associated fan.
+	// manufacturer for the associated sensorfan.
 	SerialNumber string
 	// SparePartNumber shall contain the spare or replacement part number as
-	// defined by the manufacturer for the associated fan.
+	// defined by the manufacturer for the associated sensorfan.
 	SparePartNumber string
 	// Status shall contain any status or health properties of the resource.
 	Status common.Status
@@ -115,12 +115,12 @@ type Fan struct {
 	Oem json.RawMessage
 }
 
-// UnmarshalJSON unmarshals a Fan object from the raw JSON.
-func (fan *Fan) UnmarshalJSON(b []byte) error {
-	type temp Fan
+// UnmarshalJSON unmarshals a SensorFan object from the raw JSON.
+func (sensorfan *SensorFan) UnmarshalJSON(b []byte) error {
+	type temp SensorFan
 	var t struct {
 		temp
-		FanName  string
+		SensorFanName  string
 		Assembly common.Link
 	}
 
@@ -130,24 +130,24 @@ func (fan *Fan) UnmarshalJSON(b []byte) error {
 	}
 
 	// Extract the links to other entities for later
-	*fan = Fan(t.temp)
-	fan.assembly = string(t.Assembly)
+	*sensorfan = SensorFan(t.temp)
+	sensorfan.assembly = string(t.Assembly)
 
-	if t.FanName != "" {
-		fan.Name = t.FanName
+	if t.SensorFanName != "" {
+		sensorfan.Name = t.SensorFanName
 	}
 
 	return nil
 }
 
 // TODO: Decide if it's worth adding a Client object to this non-Entity object.
-// // Assembly gets the assembly object for this fan.
-// func (fan *Fan) Assembly() (*Assembly, error) {
-// 	if fan.assembly == "" {
+// // Assembly gets the assembly object for this sensorfan.
+// func (sensorfan *SensorFan) Assembly() (*Assembly, error) {
+// 	if sensorfan.assembly == "" {
 // 		return nil, nil
 // 	}
 
-// 	resp, err := fan.Client.Get(fan.assembly)
+// 	resp, err := sensorfan.Client.Get(sensorfan.assembly)
 // 	if err != nil {
 // 		return nil, err
 // 	}
@@ -268,11 +268,11 @@ type Sensor struct {
 	ODataType string `json:"@odata.type"`
 	// Description provides a description of this resource.
 	Description string
-	// Fans shall be the definition for fans for a Redfish implementation.
-	Fans []Fan
-	// FansCount is the number of Fans.
-	FansCount int `json:"Fans@odata.count"`
-	// Redundancy is used to show redundancy for fans and other elements in
+	// SensorFans shall be the definition for sensorfans for a Redfish implementation.
+	SensorFans []Fan
+	// SensorFansCount is the number of Fans.
+	SensorFansCount int `json:"Fans@odata.count"`
+	// Redundancy is used to show redundancy for sensorfans and other elements in
 	// this resource. The use of IDs within these arrays shall reference the
 	// members of the redundancy groups.
 	Redundancy []Redundancy
@@ -322,7 +322,7 @@ func (sensor *Sensor) UnmarshalJSON(b []byte) error {
 // 	original.UnmarshalJSON(sensor.rawData)
 
 // 	readWriteFields := []string{
-// 		"Fans",
+// 		"SensorFans",
 // 		"Temperatures",
 // 	}
 
