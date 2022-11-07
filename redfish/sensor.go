@@ -334,7 +334,7 @@ func GetSensor(c common.Client, uri string) (*Sensor, error) {
 	}
 
 	sensor.SetClient(c)
-	return &Sensor, nil
+	return &sensor, nil
 }
 
 // ListReferencedSensors gets the collection of Sensor from a provided reference.
