@@ -256,7 +256,7 @@ type Sensor struct {
 	// Description provides a description of this resource.
 	Description string
 	// SensorFans shall be the definition for sensorfans for a Redfish implementation.
-	SensorFans []Fan
+	SensorFans []SensorFan
 	// SensorFansCount is the number of Fans.
 	SensorFansCount int `json:"Fans@odata.count"`
 	// Redundancy is used to show redundancy for sensorfans and other elements in

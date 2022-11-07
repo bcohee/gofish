@@ -224,7 +224,7 @@ type Chassis struct {
 	// millimeters, as specified by the manufacturer.
 	WidthMm         float64
 	thermal         string
-	sensor         string
+	sensor          string
 	power           string
 	networkAdapters string
 	computerSystems []string
