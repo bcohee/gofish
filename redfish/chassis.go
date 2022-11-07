@@ -224,6 +224,7 @@ type Chassis struct {
 	// millimeters, as specified by the manufacturer.
 	WidthMm         float64
 	thermal         string
+	sensors         string
 	power           string
 	networkAdapters string
 	computerSystems []string
@@ -258,6 +259,7 @@ func (chassis *Chassis) UnmarshalJSON(b []byte) error {
 		temp
 		Drives          common.Link
 		Thermal         common.Link
+		Sensors         common.Link
 		Power           common.Link
 		NetworkAdapters common.Link
 		Links           linkReference
@@ -278,6 +280,7 @@ func (chassis *Chassis) UnmarshalJSON(b []byte) error {
 		chassis.DrivesCount = t.Links.DrivesCount
 	}
 	chassis.thermal = string(t.Thermal)
+	chassis.sensors = string(t.Sensors)
 	chassis.power = string(t.Power)
 	chassis.networkAdapters = string(t.NetworkAdapters)
 	chassis.computerSystems = t.Links.ComputerSystems.ToStrings()
@@ -405,6 +408,20 @@ func (chassis *Chassis) Thermal() (*Thermal, error) {
 	}
 
 	return thermal, nil
+}
+
+// Sensors gets the *custom LITEON PMC + PSU sensor information for the chassis
+func (chassis *Chassis) Sensors() (*Sensors, error) {
+	if chassis.sensors == "" {
+		return nil, nil
+	}
+
+	sensors, err := GetSensors(chassis.Client, chassis.sensors)
+	if err != nil {
+		return nil, err
+	}
+
+	return sensors, nil
 }
 
 // Power gets the power information for the chassis
