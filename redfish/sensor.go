@@ -10,19 +10,6 @@ import (
 	"github.com/bcohee/gofish/common"
 )
 
-// ReadingUnits is the type of units used for a reading.
-type ReadingUnits string
-
-const (
-
-	// RPMReadingUnits Indicates that the sensorfan reading and thresholds are
-	// measured in rotations per minute.
-	RPMReadingUnits ReadingUnits = "RPM"
-	// PercentReadingUnits Indicates that the sensorfan reading and thresholds are
-	// measured in percentage.
-	PercentReadingUnits ReadingUnits = "Percent"
-)
-
 // SensorFan is
 type SensorFan struct {
 	common.Entity
@@ -162,8 +149,8 @@ func (sensorfan *SensorFan) UnmarshalJSON(b []byte) error {
 // 	return &assembly, nil
 // }
 
-// Temperature is
-type Temperature struct {
+// SensorTemperature is
+type SensorTemperature struct {
 	common.Entity
 	// AdjustedMaxAllowableOperatingValue shall
 	// indicate the adjusted maximum allowable operating temperature for the
@@ -280,11 +267,11 @@ type Sensor struct {
 	RedundancyCount int `json:"Redundancy@odata.count"`
 	// Status shall contain any status or health properties of the resource.
 	Status common.Status
-	// Temperatures shall be the definition for temperature sensors for a
+	// SensorSensorTemperatures shall be the definition for temperature sensors for a
 	// Redfish implementation.
-	Temperatures []Temperature
-	// TemperaturesCount is the number of Temperature objects
-	TemperaturesCount int `json:"Temperatures@odata.count"`
+	SensorTemperatures []SensorTemperature
+	// SensorTemperaturesCount is the number of SensorTemperature objects
+	SensorTemperaturesCount int `json:"SensorTemperatures@odata.count"`
 	// Oem shall contain the OEM extensions. All values for properties that
 	// this object contains shall conform to the Redfish Specification
 	// described requirements.
@@ -323,7 +310,7 @@ func (sensor *Sensor) UnmarshalJSON(b []byte) error {
 
 // 	readWriteFields := []string{
 // 		"SensorFans",
-// 		"Temperatures",
+// 		"SensorTemperatures",
 // 	}
 
 // 	originalElement := reflect.ValueOf(original).Elem()
