@@ -42,6 +42,9 @@ var chassisBody = `{
 		"Thermal": {
 			"@odata.id": "/redfish/v1/Chassis/Chassis-1/Thermal"
 		},
+		"Sensors": {
+			"@odata.id": "/redfish/v1/Chassis/Chassis-1/Sensors"
+		},
 		"Power": {
 			"@odata.id": "/redfish/v1/Chassis/Chassis-1/Power"
 		},
@@ -154,6 +157,10 @@ func TestChassis(t *testing.T) {
 
 	if result.thermal != "/redfish/v1/Chassis/Chassis-1/Thermal" {
 		t.Errorf("Received invalid thermal reference: %s", result.thermal)
+	}
+
+	if result.sensors != "/redfish/v1/Chassis/Chassis-1/Sensors" {
+		t.Errorf("Received invalid sensors reference: %s", result.sensors)
 	}
 
 	if result.power != "/redfish/v1/Chassis/Chassis-1/Power" {

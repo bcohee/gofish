@@ -257,9 +257,9 @@ type Temperature struct {
 	UpperThresholdUser float32
 }
 
-// Sensors is used to represent a *custom LITEON PMC + PSU sensor metrics resource for a Redfish
+// Sensor is used to represent a *custom LITEON PMC + PSU sensor metrics resource for a Redfish
 // implementation.
-type Sensors struct {
+type Sensor struct {
 	common.Entity
 
 	// ODataContext is the odata context.
@@ -294,8 +294,8 @@ type Sensors struct {
 }
 
 // UnmarshalJSON unmarshals an object from the raw JSON.
-func (sensors *Sensors) UnmarshalJSON(b []byte) error {
-	type temp Sensors
+func (sensor *Sensor) UnmarshalJSON(b []byte) error {
+	type temp Sensor
 	var t struct {
 		temp
 	}
@@ -305,21 +305,21 @@ func (sensors *Sensors) UnmarshalJSON(b []byte) error {
 		return err
 	}
 
-	*sensors = Sensors(t.temp)
+	*sensor = Sensor(t.temp)
 
 	// This is a read/write object, so we need to save the raw object data for later
-	sensors.rawData = b
+	sensor.rawData = b
 
 	return nil
 }
 
 // // Update commits updates to this object's properties to the running system.
-// func (thermal *Thermal) Update() error {
+// func (sensor *Sensor) Update() error {
 
 // 	// Get a representation of the object's original state so we can find what
 // 	// to update.
-// 	original := new(Thermal)
-// 	original.UnmarshalJSON(thermal.rawData)
+// 	original := new(Sensor)
+// 	original.UnmarshalJSON(sensor.rawData)
 
 // 	readWriteFields := []string{
 // 		"Fans",
@@ -327,32 +327,32 @@ func (sensors *Sensors) UnmarshalJSON(b []byte) error {
 // 	}
 
 // 	originalElement := reflect.ValueOf(original).Elem()
-// 	currentElement := reflect.ValueOf(thermal).Elem()
+// 	currentElement := reflect.ValueOf(sensor).Elem()
 
-// 	return thermal.Entity.Update(originalElement, currentElement, readWriteFields)
+// 	return sensor.Entity.Update(originalElement, currentElement, readWriteFields)
 // }
 
-// GetSensors will get a Sensors instance from the service.
-func GetSensors(c common.Client, uri string) (*Sensors, error) {
+// GetSensor will get a Sensor instance from the service.
+func GetSensor(c common.Client, uri string) (*Sensor, error) {
 	resp, err := c.Get(uri)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	var sensors Sensors
-	err = json.NewDecoder(resp.Body).Decode(&sensors)
+	var sensor Sensor
+	err = json.NewDecoder(resp.Body).Decode(&sensor)
 	if err != nil {
 		return nil, err
 	}
 
-	sensors.SetClient(c)
-	return &Sensors, nil
+	sensor.SetClient(c)
+	return &Sensor, nil
 }
 
-// ListReferencedSensors gets the collection of Sensors from a provided reference.
-func ListReferencedSensors(c common.Client, link string) ([]*Sensors, error) { //nolint:dupl
-	var result []*Sensors
+// ListReferencedSensors gets the collection of Sensor from a provided reference.
+func ListReferencedSensors(c common.Client, link string) ([]*Sensor, error) { //nolint:dupl
+	var result []*Sensor
 	if link == "" {
 		return result, nil
 	}
@@ -363,12 +363,12 @@ func ListReferencedSensors(c common.Client, link string) ([]*Sensors, error) { /
 	}
 
 	collectionError := common.NewCollectionError()
-	for _, sensorsLink := range links.ItemLinks {
-		sensors, err := GetSensors(c, sensorsLink)
+	for _, sensorLink := range links.ItemLinks {
+		sensor, err := GetSensor(c, sensorLink)
 		if err != nil {
-			collectionError.Failures[sensorsLink] = err
+			collectionError.Failures[sensorLink] = err
 		} else {
-			result = append(result, sensors)
+			result = append(result, sensor)
 		}
 	}
 
