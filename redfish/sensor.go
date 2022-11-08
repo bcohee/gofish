@@ -6,6 +6,8 @@ package redfish
 
 import (
 	"encoding/json"
+	
+	"github.com/apex/log"
 
 	"github.com/bcohee/gofish/common"
 )
