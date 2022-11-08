@@ -22,8 +22,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/apex/log"
-
 	"github.com/bcohee/gofish/common"
 	"github.com/bcohee/gofish/redfish"
 )
