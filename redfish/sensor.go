@@ -191,6 +191,7 @@ func GetSensor(c common.Client, uri string) (*Sensor, error) {
 // ListReferencedSensors gets the collection of Sensor from a provided reference.
 func ListReferencedSensors(c common.Client, link string) ([]*Sensor, error) { //nolint:dupl
 	var result []*Sensor
+	log.Debugf("gofish/sensor/ListReferencedSensors: link = %s", link)
 	if link == "" {
 		return result, nil
 	}
