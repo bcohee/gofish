@@ -32,18 +32,7 @@ type redfishSensorType struct {
 	Thresholds      redfishSensorThresholdType
 }
 
-// Sensor is used to represent a *custom LITEON PMC + PSU sensor metrics resource for a Redfish
-// implementation.
-type Sensor struct {
-	common.Entity
-
-	// ODataContext is the odata context.
-	ODataContext string `json:"@odata.context"`
-	// ODataType is the odata type.
-	ODataType string `json:"@odata.type"`
-	// Description provides a description of this resource.
-	Description string
-
+type redfishSensorMembers struct {
 	CPU                        redfishSensorType
 	Memory                     redfishSensorType
 	Storage_Internal           redfishSensorType
@@ -121,6 +110,21 @@ type Sensor struct {
 	p5_pout                    redfishSensorType
 	p5_vin                     redfishSensorType
 	p5_vout                    redfishSensorType
+}
+
+// Sensor is used to represent a *custom LITEON PMC + PSU sensor metrics resource for a Redfish
+// implementation.
+type Sensor struct {
+	common.Entity
+
+	// ODataContext is the odata context.
+	ODataContext string `json:"@odata.context"`
+	// ODataType is the odata type.
+	ODataType string `json:"@odata.type"`
+	// Description provides a description of this resource.
+	Description string
+
+	Members redfishSensorMembers
 
 	Oem json.RawMessage
 	// rawData holds the original serialized JSON so we can compare updates.
