@@ -7,8 +7,6 @@ package redfish
 import (
 	"encoding/json"
 
-	"github.com/apex/log"
-
 	"github.com/bcohee/gofish/common"
 )
 
@@ -114,9 +112,9 @@ type redfishSensorMembers struct {
 	p5_vout                    redfishSensorType
 }
 
-// Sensor is used to represent a *custom LITEON PMC + PSU sensor metrics resource for a Redfish
+// Sensors is used to represent a *custom LITEON PMC + PSU sensor metrics resource for a Redfish
 // implementation.
-type Sensor struct {
+type Sensors struct {
 	common.Entity
 
 	// ODataContext is the odata context.
@@ -126,7 +124,7 @@ type Sensor struct {
 	// Description provides a description of this resource.
 	Description string
 
-	Members redfishSensorMembers
+	Members redfishSensorsMembers
 
 	Oem json.RawMessage
 	// rawData holds the original serialized JSON so we can compare updates.
@@ -134,8 +132,8 @@ type Sensor struct {
 }
 
 // UnmarshalJSON unmarshals an object from the raw JSON.
-func (sensor *Sensor) UnmarshalJSON(b []byte) error {
-	type temp Sensor
+func (sensor *Sensors) UnmarshalJSON(b []byte) error {
+	type temp Sensors
 	var t struct {
 		temp
 	}
@@ -145,7 +143,7 @@ func (sensor *Sensor) UnmarshalJSON(b []byte) error {
 		return err
 	}
 
-	*sensor = Sensor(t.temp)
+	*sensor = Sensors(t.temp)
 
 	// This is a read/write object, so we need to save the raw object data for later
 	sensor.rawData = b
@@ -154,16 +152,16 @@ func (sensor *Sensor) UnmarshalJSON(b []byte) error {
 }
 
 // // Update commits updates to this object's properties to the running system.
-// func (sensor *Sensor) Update() error {
+// func (sensor *Sensors) Update() error {
 
 // 	// Get a representation of the object's original state so we can find what
 // 	// to update.
-// 	original := new(Sensor)
+// 	original := new(Sensors)
 // 	original.UnmarshalJSON(sensor.rawData)
 
 // 	readWriteFields := []string{
-// 		"SensorFans",
-// 		"SensorTemperatures",
+// 		"SensorsFans",
+// 		"SensorsTemperatures",
 // 	}
 
 // 	originalElement := reflect.ValueOf(original).Elem()
@@ -172,15 +170,15 @@ func (sensor *Sensor) UnmarshalJSON(b []byte) error {
 // 	return sensor.Entity.Update(originalElement, currentElement, readWriteFields)
 // }
 
-// GetSensor will get a Sensor instance from the service.
-func GetSensor(c common.Client, uri string) (*Sensor, error) {
+// GetSensors will get a Sensors instance from the service.
+func GetSensors(c common.Client, uri string) (*Sensors, error) {
 	resp, err := c.Get(uri)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	var sensor Sensor
+	var sensor Sensors
 	err = json.NewDecoder(resp.Body).Decode(&sensor)
 	if err != nil {
 		return nil, err
@@ -190,10 +188,9 @@ func GetSensor(c common.Client, uri string) (*Sensor, error) {
 	return &sensor, nil
 }
 
-// ListReferencedSensors gets the collection of Sensor from a provided reference.
-func ListReferencedSensors(c common.Client, link string) ([]*Sensor, error) { //nolint:dupl
-	var result []*Sensor
-	log.Infof("gofish/sensor/ListReferencedSensors: link = %s", link)
+// ListReferencedSensors gets the collection of Sensors from a provided reference.
+func ListReferencedSensors(c common.Client, link string) ([]*Sensors, error) { //nolint:dupl
+	var result []*Sensors
 	if link == "" {
 		return result, nil
 	}
@@ -205,7 +202,7 @@ func ListReferencedSensors(c common.Client, link string) ([]*Sensor, error) { //
 
 	collectionError := common.NewCollectionError()
 	for _, sensorLink := range links.ItemLinks {
-		sensor, err := GetSensor(c, sensorLink)
+		sensor, err := GetSensors(c, sensorLink)
 		if err != nil {
 			collectionError.Failures[sensorLink] = err
 		} else {
