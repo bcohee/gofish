@@ -10,238 +10,26 @@ import (
 	"github.com/bcohee/gofish/common"
 )
 
-// SensorFan is
-type SensorFan struct {
-	common.Entity
-	// assembly shall be a link to a resource of type Assembly.
-	assembly string
-	// HotPluggable shall indicate whether the
-	// device can be inserted or removed while the underlying equipment
-	// otherwise remains in its current operational state. Devices indicated
-	// as hot-pluggable shall allow the device to become operable without
-	// altering the operational state of the underlying equipment. Devices
-	// that cannot be inserted or removed from equipment in operation, or
-	// devices that cannot become operable without affecting the operational
-	// state of that equipment, shall be indicated as not hot-pluggable.
-	HotPluggable bool
-	// IndicatorLED shall contain the indicator light state for the indicator
-	// light associated with this sensorfan.
-	IndicatorLED common.IndicatorLED
-	// Location shall contain location information of the associated sensorfan.
-	Location common.Location
-	// LowerThresholdCritical shall indicate the Reading is below the normal
-	// range but is not yet fatal. The units shall be the same units as the
-	// related Reading property.
-	LowerThresholdCritical float32
-	// LowerThresholdFatal shall indicate the Reading is below the normal range
-	// and is fatal. The units shall be the same units as the related Reading property.
-	LowerThresholdFatal float32
-	// LowerThresholdNonCritical shall indicate the Reading is below the normal
-	// range but is not critical. The units shall be the same units as the related Reading property.
-	LowerThresholdNonCritical float32
-	// Manufacturer shall be the name of the organization responsible for producing
-	// the sensorfan. This organization might be the entity from whom the sensorfan is
-	// purchased, but this is not necessarily true.
-	Manufacturer string
-	// MaxReadingRange shall indicate the
-	// highest possible value for Reading. The units shall be the same units
-	// as the related Reading property.
-	MaxReadingRange float32
-	// MemberID shall uniquely identify the member within the collection. For
-	// services supporting Redfish v1.6 or higher, this value shall be the
-	// zero-based array index.
-	MemberID string `json:"MemberId"`
-	// MinReadingRange shall indicate the
-	// lowest possible value for Reading. The units shall be the same units
-	// as the related Reading property.
-	MinReadingRange float32
-	// Model shall contain the model information as defined by the manufacturer
-	// for the associated sensorfan.
-	Model string
-	// PartNumber shall contain the part number as defined by the manufacturer
-	// for the associated sensorfan.
-	PartNumber string
-	// PhysicalContext shall be a description of the affected device or region
-	// within the chassis to which this sensorfan is associated.
-	PhysicalContext string
-	// Reading shall be the current value of the sensorfan sensor's reading.
-	Reading float32
-	// ReadingUnits shall be the units in which the sensorfan's reading and thresholds are measured.
-	ReadingUnits ReadingUnits
-	// Redundancy is used to show redundancy for sensorfans and other elements in
-	// this resource. The use of IDs within these arrays shall reference the
-	// members of the redundancy groups.
-	Redundancy []Redundancy
-	// RedundancyCount is the number of Redundancy elements.
-	RedundancyCount int `json:"Redundancy@odata.count"`
-	// SensorNumber shall be a numerical identifier for this sensorfan speed sensor
-	// that is unique within this resource.
-	SensorNumber int
-	// SerialNumber shall contain the serial number as defined by the
-	// manufacturer for the associated sensorfan.
-	SerialNumber string
-	// SparePartNumber shall contain the spare or replacement part number as
-	// defined by the manufacturer for the associated sensorfan.
-	SparePartNumber string
-	// Status shall contain any status or health properties of the resource.
-	Status common.Status
-	// UpperThresholdCritical shall indicate the Reading is above the normal
-	// range but is not yet fatal. The units shall be the same units as the
-	// related Reading property.
-	UpperThresholdCritical float32
-	// UpperThresholdFatal shall indicate the Reading is above the normal range
-	// and is fatal. The units shall be the same units as the related Reading property.
-	UpperThresholdFatal float32
-	// UpperThresholdNonCritical shall indicate the Reading is above the normal
-	// range but is not critical. The units shall be the same units as the
-	// related Reading property.
-	UpperThresholdNonCritical float32
-	// Oem shall contain the OEM extensions. All values for properties that
-	// this object contains shall conform to the Redfish Specification
-	// described requirements.
-	Oem json.RawMessage
+type redfishSensorThresholdReadingType struct {
+	Reading         float64
 }
 
-// UnmarshalJSON unmarshals a SensorFan object from the raw JSON.
-func (sensorfan *SensorFan) UnmarshalJSON(b []byte) error {
-	type temp SensorFan
-	var t struct {
-		temp
-		SensorFanName  string
-		Assembly common.Link
-	}
-
-	err := json.Unmarshal(b, &t)
-	if err != nil {
-		return err
-	}
-
-	// Extract the links to other entities for later
-	*sensorfan = SensorFan(t.temp)
-	sensorfan.assembly = string(t.Assembly)
-
-	if t.SensorFanName != "" {
-		sensorfan.Name = t.SensorFanName
-	}
-
-	return nil
+type redfishSensorThresholdType struct {
+	LowerCaution     redfishSensorThresholdReadingType
+	LowerCritical    redfishSensorThresholdReadingType
+	UpperCaution     redfishSensorThresholdReadingType
+	UpperCritical    redfishSensorThresholdReadingType
 }
 
-// TODO: Decide if it's worth adding a Client object to this non-Entity object.
-// // Assembly gets the assembly object for this sensorfan.
-// func (sensorfan *SensorFan) Assembly() (*Assembly, error) {
-// 	if sensorfan.assembly == "" {
-// 		return nil, nil
-// 	}
-
-// 	resp, err := sensorfan.Client.Get(sensorfan.assembly)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	defer resp.Body.Close()
-
-// 	var assembly Assembly
-// 	err = json.NewDecoder(resp.Body).Decode(&assembly)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return &assembly, nil
-// }
-
-// SensorTemperature is
-type SensorTemperature struct {
+type redfishSensorType struct {
 	common.Entity
-	// AdjustedMaxAllowableOperatingValue shall
-	// indicate the adjusted maximum allowable operating temperature for the
-	// equipment monitored by this temperature sensor, as specified by a
-	// standards body, manufacturer, or a combination, and adjusted based on
-	// environmental conditions present. For example, liquid inlet
-	// temperature may be adjusted based on the available liquid pressure.
-	AdjustedMaxAllowableOperatingValue float32
-	// AdjustedMinAllowableOperatingValue shall
-	// indicate the adjusted minimum allowable operating temperature for the
-	// equipment monitored by this temperature sensor, as specified by a
-	// standards body, manufacturer, or a combination, and adjusted based on
-	// environmental conditions present. For example, liquid inlet
-	// temperature may be adjusted based on the available liquid pressure.
-	AdjustedMinAllowableOperatingValue float32
-	// DeltaPhysicalContext shall be a description of the affected device or
-	// region within the chassis to which the DeltaReadingCelsius temperature
-	// measurement applies, relative to PhysicalContext.
-	DeltaPhysicalContext string
-	// DeltaReadingCelsius shall be the delta of the values of the temperature
-	// readings across this sensor and the sensor at DeltaPhysicalContext.
-	DeltaReadingCelsius float32
-	// LowerThresholdCritical shall indicate
-	// the ReadingCelsius is below the normal range but is not yet fatal. The
-	// units shall be the same units as the related ReadingCelsius property.
-	LowerThresholdCritical float32
-	// LowerThresholdFatal shall indicate the
-	// ReadingCelsius is below the normal range and is fatal. The units shall
-	// be the same units as the related ReadingCelsius property.
-	LowerThresholdFatal float32
-	// LowerThresholdNonCritical shall indicate
-	// the ReadingCelsius is below the normal range but is not critical. The
-	// units shall be the same units as the related ReadingCelsius property.
-	LowerThresholdNonCritical float32
-	// LowerThresholdUser shall contain the value at which
-	// the ReadingCelsius property is below the user-defined range. The
-	// value of the property shall use the same units as the ReadingCelsius
-	// property. The value shall be equal to the value of
-	// LowerThresholdNonCritical, LowerThresholdCritical, or
-	// LowerThresholdFatal, unless set by a user.
-	LowerThresholdUser float32
-	// MaxAllowableOperatingValue shall
-	// indicate the maximum allowable operating temperature for the equipment
-	// monitored by this temperature sensor, as specified by a standards
-	// body, manufacturer, or a combination.
-	MaxAllowableOperatingValue float32
-	// MaxReadingRangeTemp shall indicate the
-	// highest possible value for ReadingCelsius. The units shall be the same
-	// units as the related ReadingCelsius property.
-	MaxReadingRangeTemp float32
-	// MemberID shall uniquely identify the member within the collection. For
-	// services supporting Redfish v1.6 or higher, this value shall be the
-	// zero-based array index.
-	MemberID string `json:"MemberID"`
-	// MinAllowableOperatingValue shall indicate the minimum allowable operating
-	// temperature for the equipment monitored by this temperature sensor, as
-	// specified by a standards body, manufacturer, or a combination.
-	MinAllowableOperatingValue float32
-	// MinReadingRangeTemp shall indicate the lowest possible value for
-	// ReadingCelsius. The units shall be the same units as the related
-	// ReadingCelsius property.
-	MinReadingRangeTemp float32
-	// PhysicalContext shall be a description of the affected device or region
-	// within the chassis to which this temperature measurement applies.
-	PhysicalContext string
-	// ReadingCelsius shall be the current value of the temperature sensor's reading.
-	ReadingCelsius float32
-	// SensorNumber shall be a numerical identifier for this temperature sensor
-	// that is unique within this resource.
-	SensorNumber int
-	// Status shall contain any status or health properties of the resource.
-	Status common.Status
-	// UpperThresholdCritical shall indicate
-	// the ReadingCelsius is above the normal range but is not yet fatal. The
-	// units shall be the same units as the related ReadingCelsius property.
-	UpperThresholdCritical float32
-	// UpperThresholdFatal shall indicate the
-	// ReadingCelsius is above the normal range and is fatal. The units shall
-	// be the same units as the related ReadingCelsius property.
-	UpperThresholdFatal float32
-	// UpperThresholdNonCritical shall indicate
-	// the ReadingCelsius is above the normal range but is not critical. The
-	// units shall be the same units as the related ReadingCelsius property.
-	UpperThresholdNonCritical float32
-	// UpperThresholdUser shall contain the value at which
-	// the ReadingCelsius property is above the user-defined range. The
-	// value of the property shall use the same units as the ReadingCelsius
-	// property. The value shall be equal to the value of
-	// UpperThresholdNonCritical, UpperThresholdCritical, or
-	// UpperThresholdFatal, unless set by a user.
-	UpperThresholdUser float32
+	Reading         float64
+	ReadingRangeMax float64
+	ReadingRangeMin float64
+	ReadingType     string
+	ReadingUnits    string
+	Status          common.Status
+	Thresholds      redfishSensorThresholdType
 }
 
 // Sensor is used to represent a *custom LITEON PMC + PSU sensor metrics resource for a Redfish
@@ -255,26 +43,85 @@ type Sensor struct {
 	ODataType string `json:"@odata.type"`
 	// Description provides a description of this resource.
 	Description string
-	// SensorFans shall be the definition for sensorfans for a Redfish implementation.
-	SensorFans []SensorFan
-	// SensorFansCount is the number of Fans.
-	SensorFansCount int `json:"Fans@odata.count"`
-	// Redundancy is used to show redundancy for sensorfans and other elements in
-	// this resource. The use of IDs within these arrays shall reference the
-	// members of the redundancy groups.
-	Redundancy []Redundancy
-	// RedundancyCount is the number of Redundancy objects.
-	RedundancyCount int `json:"Redundancy@odata.count"`
-	// Status shall contain any status or health properties of the resource.
-	Status common.Status
-	// SensorSensorTemperatures shall be the definition for temperature sensors for a
-	// Redfish implementation.
-	SensorTemperatures []SensorTemperature
-	// SensorTemperaturesCount is the number of SensorTemperature objects
-	SensorTemperaturesCount int `json:"SensorTemperatures@odata.count"`
-	// Oem shall contain the OEM extensions. All values for properties that
-	// this object contains shall conform to the Redfish Specification
-	// described requirements.
+
+	CPU                        redfishSensorType
+	Memory                     redfishSensorType
+	Storage_Internal           redfishSensorType
+	Storage_RW                 redfishSensorType
+	chassis_eﬀiciency          redfishSensorType
+	chassis_input_current      redfishSensorType
+	chassis_input_power        redfishSensorType
+	chassis_input_voltage      redfishSensorType
+	chassis_output_current     redfishSensorType
+	chassis_output_power       redfishSensorType
+	chassis_output_voltage     redfishSensorType
+	chassis_temperature        redfishSensorType
+	p0_ambient                 redfishSensorType
+	p0_exhaust                 redfishSensorType
+	p0_fan1                    redfishSensorType
+	p0_hotspot                 redfishSensorType
+	p0_iin                     redfishSensorType
+	p0_iout                    redfishSensorType
+	p0_pin                     redfishSensorType
+	p0_pout                    redfishSensorType
+	p0_vin                     redfishSensorType
+	p0_vout                    redfishSensorType
+
+	p1_ambient                 redfishSensorType
+	p1_exhaust                 redfishSensorType
+	p1_fan1                    redfishSensorType
+	p1_hotspot                 redfishSensorType
+	p1_iin                     redfishSensorType
+	p1_iout                    redfishSensorType
+	p1_pin                     redfishSensorType
+	p1_pout                    redfishSensorType
+	p1_vin                     redfishSensorType
+	p1_vout                    redfishSensorType
+
+	p2_ambient                 redfishSensorType
+	p2_exhaust                 redfishSensorType
+	p2_fan1                    redfishSensorType
+	p2_hotspot                 redfishSensorType
+	p2_iin                     redfishSensorType
+	p2_iout                    redfishSensorType
+	p2_pin                     redfishSensorType
+	p2_pout                    redfishSensorType
+	p2_vin                     redfishSensorType
+	p2_vout                    redfishSensorType
+
+	p3_ambient                 redfishSensorType
+	p3_exhaust                 redfishSensorType
+	p3_fan1                    redfishSensorType
+	p3_hotspot                 redfishSensorType
+	p3_iin                     redfishSensorType
+	p3_iout                    redfishSensorType
+	p3_pin                     redfishSensorType
+	p3_pout                    redfishSensorType
+	p3_vin                     redfishSensorType
+	p3_vout                    redfishSensorType
+
+	p4_ambient                 redfishSensorType
+	p4_exhaust                 redfishSensorType
+	p4_fan1                    redfishSensorType
+	p4_hotspot                 redfishSensorType
+	p4_iin                     redfishSensorType
+	p4_iout                    redfishSensorType
+	p4_pin                     redfishSensorType
+	p4_pout                    redfishSensorType
+	p4_vin                     redfishSensorType
+	p4_vout                    redfishSensorType
+
+	p5_ambient                 redfishSensorType
+	p5_exhaust                 redfishSensorType
+	p5_fan1                    redfishSensorType
+	p5_hotspot                 redfishSensorType
+	p5_iin                     redfishSensorType
+	p5_iout                    redfishSensorType
+	p5_pin                     redfishSensorType
+	p5_pout                    redfishSensorType
+	p5_vin                     redfishSensorType
+	p5_vout                    redfishSensorType
+
 	Oem json.RawMessage
 	// rawData holds the original serialized JSON so we can compare updates.
 	rawData []byte
