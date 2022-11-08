@@ -6,7 +6,7 @@ package redfish
 
 import (
 	"encoding/json"
-	
+
 	"github.com/apex/log"
 
 	"github.com/bcohee/gofish/common"
@@ -193,7 +193,7 @@ func GetSensor(c common.Client, uri string) (*Sensor, error) {
 // ListReferencedSensors gets the collection of Sensor from a provided reference.
 func ListReferencedSensors(c common.Client, link string) ([]*Sensor, error) { //nolint:dupl
 	var result []*Sensor
-	log.Debugf("gofish/sensor/ListReferencedSensors: link = %s", link)
+	log.Infof("gofish/sensor/ListReferencedSensors: link = %s", link)
 	if link == "" {
 		return result, nil
 	}
