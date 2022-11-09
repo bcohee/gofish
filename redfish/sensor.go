@@ -32,7 +32,7 @@ type redfishSensorType struct {
 	Thresholds      redfishSensorThresholdType
 }
 
-type redfishSensorMembers struct {
+type redfishSensorsMembers struct {
 	CPU                        redfishSensorType
 	Memory                     redfishSensorType
 	Storage_Internal           redfishSensorType
