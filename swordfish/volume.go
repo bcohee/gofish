@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/stmcginnis/gofish/common"
-	"github.com/stmcginnis/gofish/redfish"
+	"github.com/bcohee/gofish/common"
+	"github.com/bcohee/gofish/redfish"
 )
 
 // InitializeType is
